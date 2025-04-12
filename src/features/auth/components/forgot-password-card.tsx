@@ -41,8 +41,8 @@ export const ForgotPasswordCard = ({ setstate }: SignInCardProps) => {
 
   return (
     <div className="w-full max-w-md p-8 mx-auto mt-10 bg-white rounded-md shadow-md">
-      <h2 className="flex text-xl font-bold mb-4 justify-center">
-        Forgot Password
+      <h2 className="flex text-xl text-[#1b1b62] font-bold mb-4 justify-center">
+        FORGOT PASSWORD
       </h2>
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
@@ -59,7 +59,7 @@ export const ForgotPasswordCard = ({ setstate }: SignInCardProps) => {
         <button
           type="submit"
           disabled={pending}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md w-full hover:bg-blue-600"
+          className="bg-blue-500 text-white font-semibold px-4 py-2 rounded-md w-full hover:bg-blue-600"
         >
           {pending ? 'Sending...' : 'Send Reset Link'}
         </button>

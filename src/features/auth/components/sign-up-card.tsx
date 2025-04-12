@@ -85,11 +85,15 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
 
   return (
     <Card className="w-full h-full p-8 max-w-md mx-auto mt-20">
-      <CardHeader className="px-0 pt-0">
-        <CardTitle>Create your new account</CardTitle>
-        <CardDescription>
-          Sign up to manage your flash game modules
-        </CardDescription>
+      <CardHeader className="pt-0 px-0 flex flex-col items-center text-center gap-4">
+        <img
+          src="/FLASH-logo-colorful.png"
+          alt="Flash Logo"
+          className="h-16 w-auto"
+        />
+        <CardTitle className="text-xl font-semibold text-[#1b1b62]">
+          Create an account
+        </CardTitle>
       </CardHeader>
 
       {error && (
@@ -161,7 +165,7 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
               />
             )}
           </div>
-          <Button type="submit" className="w-full" size="lg" disabled={pending}>
+          <Button type="submit" className="w-full font-semibold" size="lg" disabled={pending}>
             Create Account
           </Button>
         </form>
@@ -171,7 +175,7 @@ export const SignUpCard = ({ setstate }: SignUpCardProps) => {
         <p className="text-xs text-muted-foreground">
           Already have an account?{' '}
           <span
-            className="text-sky-700 hover:underline cursor-pointer"
+            className="text-sky-700 font-semibold hover:underline cursor-pointer"
             onClick={() => setstate('SignIn')}
           >
             Sign in
