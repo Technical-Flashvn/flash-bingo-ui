@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Trash2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,12 @@ interface ModuleCardProps {
   onDeleted: () => void;
 }
 
-export const ModuleCard = ({ module, onDeleted, onUpdated }: ModuleCardProps) => {
+export const ModuleCard = ({
+  module,
+  onDeleted,
+  onUpdated,
+}: ModuleCardProps) => {
+  const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(module.title);
   const [keywordsString, setKeywordsString] = useState(
@@ -89,7 +95,12 @@ export const ModuleCard = ({ module, onDeleted, onUpdated }: ModuleCardProps) =>
       <Card className="p-4 flex items-center justify-between hover:shadow-md">
         {/* Left: title + dropdown */}
         <div className="flex flex-col gap-2">
-          <p className="font-semibold text-base text-primary">{module.title}</p>
+          <p
+            className="font-semibold text-base text-primary"
+            onClick={() => router.replace(`/dashboard/module/${module._id}`)}
+          >
+            {module.title}
+          </p>
           <Select>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="view keyword" />
@@ -106,7 +117,16 @@ export const ModuleCard = ({ module, onDeleted, onUpdated }: ModuleCardProps) =>
 
         {/* Right: buttons */}
         <div className="flex items-center gap-2">
-          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+          <Dialog
+            open={editOpen}
+            onOpenChange={(open) => {
+              setEditOpen(open);
+              if (!open) {
+                setNewTitle(module.title);
+                setKeywordsString(module.keywords.join("\n"));
+              }
+            }}
+          >
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Pencil className="w-4 h-4 text-blue-500" />
@@ -132,7 +152,12 @@ export const ModuleCard = ({ module, onDeleted, onUpdated }: ModuleCardProps) =>
               </div>
 
               <DialogFooter className="mt-4">
-                <Button onClick={handleEdit}>Save</Button>
+                <Button
+                  onClick={handleEdit}
+                  className="bg-[#3f99e9] hover:bg-blue-500 font-semibold cursor-pointer text-white"
+                >
+                  Save
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
