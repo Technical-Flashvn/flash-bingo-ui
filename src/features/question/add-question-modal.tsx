@@ -1,6 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
+import toast from "react-hot-toast";
+import { useState, useRef } from "react";
+
 import {
   Dialog,
   DialogTrigger,
@@ -8,13 +10,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircleIcon, Plus, Trash2 } from 'lucide-react';
-import { createQuestion } from '@/services/question';
-import toast from 'react-hot-toast';
+} from "@/components/ui/dialog";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { CheckCircleIcon, Plus, Trash2 } from "lucide-react";
+
+import { createQuestion } from "@/services/question";
 
 interface AddQuestionModalProps {
   moduleId: string;
@@ -29,32 +38,37 @@ export const AddQuestionModal = ({
 }: AddQuestionModalProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedKeyword, setSelectedKeyword] = useState("");
+  const [renderId, setRenderId] = useState(0);
+
   const titleRef = useRef<HTMLInputElement | null>(null);
   const correctAnswerRef = useRef<HTMLInputElement | null>(null);
-  const [wrongAnswers, setWrongAnswers] = useState<string[]>(['']);
-  const [selectedKeyword, setSelectedKeyword] = useState<string>('');
+  const wrongAnswersRefs = useRef<HTMLInputElement[]>([null!]);
 
   const handleAddWrongAnswer = () => {
-    setWrongAnswers([...wrongAnswers, '']);
+    wrongAnswersRefs.current.push(null!);
+    setRenderId((prev) => prev + 1);
   };
 
   const handleRemoveWrongAnswer = (index: number) => {
-    setWrongAnswers((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleWrongAnswerChange = (index: number, value: string) => {
-    setWrongAnswers((prev) => prev.map((ans, i) => (i === index ? value : ans)));
+    wrongAnswersRefs.current.splice(index, 1);
+    setRenderId((prev) => prev + 1);
   };
 
   const handleSubmit = async () => {
     const title = titleRef.current?.value.trim();
     const correctAnswer = correctAnswerRef.current?.value.trim();
-    const filteredWrongAnswers = wrongAnswers
-      .map((ans) => ans.trim())
-      .filter((ans) => ans !== '');
+    const filteredWrongAnswers = wrongAnswersRefs.current
+      .map((ref) => ref?.value.trim())
+      .filter((val) => val && val !== "");
 
-    if (!title || !correctAnswer || filteredWrongAnswers.length === 0 || !selectedKeyword) {
-      toast.error('Please fill all fields!');
+    if (
+      !title ||
+      !correctAnswer ||
+      filteredWrongAnswers.length === 0 ||
+      !selectedKeyword
+    ) {
+      toast.error("Please fill all fields!");
       return;
     }
 
@@ -67,27 +81,25 @@ export const AddQuestionModal = ({
         wrongAnswers: filteredWrongAnswers,
       });
 
-      toast.success('Question added successfully!');
+      toast.success("Question added successfully!");
       setOpen(false);
-      titleRef.current!.value = '';
-      correctAnswerRef.current!.value = '';
-      setWrongAnswers(['']);
-      setSelectedKeyword('');
+      titleRef.current!.value = "";
+      correctAnswerRef.current!.value = "";
+      wrongAnswersRefs.current = [null!]; // Reset về 1 input
+      setSelectedKeyword("");
+      setRenderId((prev) => prev + 1);
       onQuestionAdded();
     } catch (error) {
-      toast.error('Something went wrong!');
+      toast.error("Something went wrong!");
     } finally {
       setLoading(false);
     }
   };
 
-  console.log('Keywords passed to modal:', keywords);
-  
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">+ Add Question</Button>
+        <Button variant="default" className="font-semibold">+ Add Question</Button>
       </DialogTrigger>
 
       <DialogContent className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-lg">
@@ -96,11 +108,12 @@ export const AddQuestionModal = ({
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
+          {/* Question Title */}
           <Input ref={titleRef} placeholder="Question here..." />
 
           {/* Select Keyword */}
           <Select value={selectedKeyword} onValueChange={setSelectedKeyword}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select keyword..." />
             </SelectTrigger>
             <SelectContent>
@@ -126,15 +139,16 @@ export const AddQuestionModal = ({
 
           {/* Wrong answers */}
           <div className="max-h-[200px] overflow-y-auto scrollbar-hide space-y-2">
-            {wrongAnswers.map((ans, index) => (
+            {wrongAnswersRefs.current.map((_, index) => (
               <div key={index} className="relative flex items-center">
                 <Input
-                  value={ans}
-                  onChange={(e) => handleWrongAnswerChange(index, e.target.value)}
+                  ref={(el) => {
+                    if (el) wrongAnswersRefs.current[index] = el;
+                  }}
                   placeholder={`Wrong Answer ${index + 1}...`}
                   className="border-red-400 focus:ring-red-500"
                 />
-                {wrongAnswers.length > 1 && (
+                {wrongAnswersRefs.current.length > 1 && (
                   <button
                     onClick={() => handleRemoveWrongAnswer(index)}
                     className="absolute right-3 text-red-500 hover:text-red-700"
@@ -156,8 +170,12 @@ export const AddQuestionModal = ({
         </div>
 
         <DialogFooter className="mt-6">
-          <Button disabled={loading} onClick={handleSubmit}>
-            {loading ? 'Saving...' : 'Add Question'}
+          <Button
+            disabled={loading}
+            onClick={handleSubmit}
+            className="font-semibold text-md py-2"
+          >
+            {loading ? "Saving..." : "Add Question"}
           </Button>
         </DialogFooter>
       </DialogContent>

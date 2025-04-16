@@ -6,7 +6,7 @@ import { getQuestionsByModule, deleteQuestion } from "@/services/question";
 import { getModuleById } from "@/services/modules";
 import { AddQuestionModal } from "@/features/question/add-question-modal";
 import { QuestionCard } from "@/components/QuestionCard";
-//import { EditQuestionModal } from "@/features/question/edit-quest-modal";
+import { EditQuestionModal } from "@/features/question/edit-question-modal";
 import { useConfirm } from "@/components/use-confirm";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
@@ -129,10 +129,11 @@ export default function ModulePage() {
           />
         </div>
 
-        {/* {editingQuestion && (
+        {editingQuestion && (
           <EditQuestionModal
             question={editingQuestion}
             moduleId={moduleId as string}
+            keywords={keywords}
             onClose={() => setEditingQuestion(null)}
             onQuestionUpdated={() =>
               getQuestionsByModule(moduleId as string).then((data) =>
@@ -140,7 +141,7 @@ export default function ModulePage() {
               )
             }
           />
-        )} */}
+        )}
       </div>
     </>
   );

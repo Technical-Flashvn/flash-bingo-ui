@@ -48,7 +48,8 @@ export const QuestionCard = ({
           <Button
             variant="outline"
             className="text-white bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded-md"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               onEdit(question);
             }}
           >
@@ -58,7 +59,8 @@ export const QuestionCard = ({
           <Button
             variant="outline"
             className="text-white bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               onDelete(question._id);
             }}
           >
@@ -70,7 +72,7 @@ export const QuestionCard = ({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className=" bg-white dark:bg-zinc-900 w-full max-w-lg rounded-lg pb-16">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-gray-800">
+            <DialogTitle className="text-lg font-semibold text-[#1b1b62]">
               {question.title}
             </DialogTitle>
           </DialogHeader>
@@ -96,7 +98,7 @@ export const QuestionCard = ({
 
           {/* Keyword tag fixed at bottom */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-            <span className="px-4 py-2 text-md rounded-full bg-gray-800 text-white shadow-sm">
+            <span className="px-4 py-3 text-md rounded-full bg-[#3f99e9] text-white shadow-sm font-semibold">
               {question.keyword}
             </span>
           </div>
