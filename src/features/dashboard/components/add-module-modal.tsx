@@ -49,6 +49,11 @@ export const AddModuleModal = ({ onModuleAdded }: AddModuleModalProps) => {
       return;
     }
 
+    if (keywords.length > 30) {
+      setError("You can only add up to 30 keywords.");
+      return;
+    }
+
     setLoading(true);
     try {
       await createModule(title, keywords);
@@ -73,7 +78,7 @@ export const AddModuleModal = ({ onModuleAdded }: AddModuleModalProps) => {
       }}
     >
       <DialogTrigger asChild>
-        <Button>+ Add module</Button>
+        <Button className="font-semibold">+ Add module</Button>
       </DialogTrigger>
 
       <DialogContent className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-lg">

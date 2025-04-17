@@ -43,7 +43,7 @@ export const DashboardHeader = ({ user }: DashboardHeaderProps) => {
   return (
     <>
       <ConfirmDialog />
-      <header className="flex items-center justify-between px-6 py-4 shadow-md bg-[#1b1b62] text-white sticky top-0 z-10">
+      <header className="flex items-center justify-between px-6 py-4 shadow-md bg-[#1b1b62] text-white sticky top-0 z-50">
         {/* Logo + Welcome */}
         <div className="flex items-center gap-4">
           <img

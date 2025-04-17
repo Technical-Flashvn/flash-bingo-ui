@@ -1,3 +1,13 @@
-export default function Home() {
-  return <div className="text-blue-500">home page</div>;
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
+export default async function Home() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('accessToken');
+
+  if (!accessToken) {
+    redirect('/auth');
+  }
+
+  redirect('/dashboard');
 }

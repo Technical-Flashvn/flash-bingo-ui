@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteModule, updateModule } from "@/services/modules";
 import {
@@ -44,6 +44,8 @@ export const ModuleCard = ({
   onUpdated,
 }: ModuleCardProps) => {
   const router = useRouter();
+  const [error, setError] = useState("");
+
   const [editOpen, setEditOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(module.title);
   const [keywordsString, setKeywordsString] = useState(
@@ -75,7 +77,12 @@ export const ModuleCard = ({
       .filter((k) => k.length > 0);
 
     if (!trimmedTitle || trimmedKeywords.length === 0) {
-      toast.error("Please enter valid title and keywords.");
+      setError("Please enter valid title and keywords.");
+      return;
+    }
+
+    if (trimmedKeywords.length > 30) {
+      setError("You can only enter up to 30 keywords.");
       return;
     }
 
@@ -94,15 +101,16 @@ export const ModuleCard = ({
       <ConfirmDialog />
       <Card className="p-4 flex items-center justify-between hover:shadow-md">
         {/* Left: title + dropdown */}
-        <div className="flex flex-col gap-2">
-          <p
-            className="font-semibold text-base text-primary"
-            onClick={() => router.replace(`/dashboard/module/${module._id}`)}
-          >
-            {module.title}
-          </p>
+        <div
+          className="flex flex-col gap-2 cursor-pointer"
+          onClick={() => router.replace(`/dashboard/module/${module._id}`)}
+        >
+          <p className="font-semibold text-base text-primary">{module.title}</p>
           <Select>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger
+              className="w-[200px]"
+              onClick={(e) => e.stopPropagation()}
+            >
               <SelectValue placeholder="view keyword" />
             </SelectTrigger>
             <SelectContent>
@@ -128,14 +136,24 @@ export const ModuleCard = ({
             }}
           >
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Pencil className="w-4 h-4 text-blue-500" />
+              <Button
+                className="bg-blue-500 hover:bg-blue-600 text-white"
+                size="icon"
+              >
+                <Pencil className="w-5 h-5" />
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-lg">
               <DialogHeader>
                 <DialogTitle>Edit Module</DialogTitle>
               </DialogHeader>
+
+              {error && (
+                <div className="bg-destructive/15 rounded-md flex p-3 items-center gap-x-2 text-sm text-destructive">
+                  <TriangleAlert className="size-4" />
+                  <p>{error}</p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Input
@@ -149,6 +167,15 @@ export const ModuleCard = ({
                   onChange={(e) => setKeywordsString(e.target.value)}
                   placeholder="Enter one keyword per line"
                 />
+                <p className="text-sm text-muted-foreground">
+                  {
+                    keywordsString
+                      .split("\n")
+                      .map((k) => k.trim())
+                      .filter((k) => k.length > 0).length
+                  }
+                  /30 keywords
+                </p>
               </div>
 
               <DialogFooter className="mt-4">
@@ -162,8 +189,15 @@ export const ModuleCard = ({
             </DialogContent>
           </Dialog>
 
-          <Button variant="ghost" size="icon" onClick={handleDelete}>
-            <Trash2 className="w-4 h-4 text-red-500" />
+          <Button
+            className="bg-red-500 hover:bg-red-600 text-white"
+            size="icon"
+            onClick={(e) => {
+              handleDelete();
+              e.stopPropagation();
+            }}
+          >
+            <Trash2 className="w-5 h-5" />
           </Button>
         </div>
       </Card>

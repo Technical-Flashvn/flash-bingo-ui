@@ -47,7 +47,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <DashboardHeader user={user} />
 
       <div className="p-6 flex-1">
         <h2 className="text-xl font-semibold mb-4">Your Modules</h2>

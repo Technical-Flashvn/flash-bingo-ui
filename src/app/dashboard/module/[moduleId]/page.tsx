@@ -2,14 +2,18 @@
 
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getQuestionsByModule, deleteQuestion } from "@/services/question";
-import { getModuleById } from "@/services/modules";
-import { AddQuestionModal } from "@/features/question/add-question-modal";
-import { QuestionCard } from "@/components/QuestionCard";
-import { EditQuestionModal } from "@/features/question/edit-question-modal";
-import { useConfirm } from "@/components/use-confirm";
-import { Loader } from "lucide-react";
+
 import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
+
+import { getModuleById } from "@/services/modules";
+import { useConfirm } from "@/components/use-confirm";
+import { QuestionCard } from "@/components/QuestionCard";
+import { ModuleBar } from "@/features/question/module-bar";
+import { AddQuestionModal } from "@/features/question/add-question-modal";
+import { getQuestionsByModule, deleteQuestion } from "@/services/question";
+import { EditQuestionModal } from "@/features/question/edit-question-modal";
+import { QuestionShowcase } from "@/features/question/question-showcase";
 
 type Question = {
   _id: string;
@@ -24,12 +28,13 @@ export default function ModulePage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [showShowcase, setShowShowcase] = useState(false);
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This action cannot be undone"
   );
 
-  const [keywords, setKeywords] = useState<string[]>([]);
   useEffect(() => {
     if (!moduleId) return;
 
@@ -95,6 +100,19 @@ export default function ModulePage() {
   return (
     <>
       <ConfirmDialog />
+      <ModuleBar
+        moduleId={moduleId as string}
+        disabled={questions.length === 0}
+        onStart={() => setShowShowcase(true)}
+      />
+
+      {showShowcase && (
+        <QuestionShowcase
+          questions={questions}
+          onClose={() => setShowShowcase(false)}
+        />
+      )}
+
       <div className="flex flex-col items-center min-h-screen p-4 w-full max-w-screen-lg mx-auto">
         <div className="w-full max-h-[600px] overflow-hidden border p-4 rounded-lg">
           <div className="overflow-y-auto max-h-[500px] scrollbar-hide">
