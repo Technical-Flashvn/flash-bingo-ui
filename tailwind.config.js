@@ -1,3 +1,5 @@
+const { keyframes } = require('framer-motion');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],

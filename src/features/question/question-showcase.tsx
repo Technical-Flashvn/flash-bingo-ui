@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { X } from "lucide-react";
 import { useConfirm } from "@/components/use-confirm";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Question = {
   _id: string;
@@ -39,7 +40,7 @@ export const QuestionShowcase = ({
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const [keywordsSeen, setKeywordsSeen] = useState<string[]>([]);
   const [ConfirmDialog, confirm] = useConfirm(
-    "Bạn có chắc muốn thoát khỏi chế độ trình chiếu?",
+    "Đóng chế độ trình chiếu?",
     "Bạn sẽ không thể xem lại câu hỏi hiện tại."
   );
 
@@ -97,54 +98,63 @@ export const QuestionShowcase = ({
         )}
 
         {/* Vùng câu hỏi và lựa chọn */}
-        <div className="border-2 border-blue-400 rounded-xl p-6 w-full max-w-xl bg-white shadow-md">
-          <h2 className="text-xl font-semibold mb-6">
-            {currentQuestion.title}
-          </h2>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentQuestion._id}
+            initial={{ rotateY: 90, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -90, opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="border-2 border-blue-400 rounded-xl p-6 w-full max-w-xl bg-white shadow-md"
+          >
+            <h2 className="text-xl font-semibold mb-6">
+              {currentQuestion.title}
+            </h2>
 
-          <div className="flex flex-col gap-3 w-full mb-4">
-            {shuffledOptions.map((opt, i) => {
-              const isCorrect = opt === currentQuestion.correctAnswer;
-              return (
-                <div
-                  key={i}
-                  className={`border px-4 py-2 rounded-lg text-left transition-all cursor-pointer ${
-                    showAnswer && isCorrect
-                      ? "border-green-500 font-semibold"
-                      : "border-blue-200"
-                  }`}
-                >
-                  <strong className="mr-2">{getOptionLabel(i)}.</strong> {opt}
-                </div>
-              );
-            })}
-          </div>
+            <div className="flex flex-col gap-3 w-full mb-4">
+              {shuffledOptions.map((opt, i) => {
+                const isCorrect = opt === currentQuestion.correctAnswer;
+                return (
+                  <div
+                    key={i}
+                    className={`border px-4 py-2 rounded-lg text-left transition-all cursor-pointer ${
+                      showAnswer && isCorrect
+                        ? "border-green-500 font-semibold"
+                        : "border-blue-200"
+                    }`}
+                  >
+                    <strong className="mr-2">{getOptionLabel(i)}.</strong> {opt}
+                  </div>
+                );
+              })}
+            </div>
 
-          {showAnswer && (
-            <Badge className="text-md font-semibold py-2 px-4 rounded-full bg-[#3f99e9] text-white mb-4">
-              {currentQuestion.keyword}
-            </Badge>
-          )}
+            {showAnswer && (
+              <Badge className="text-md font-semibold py-2 px-4 rounded-full bg-[#3f99e9] text-white mb-4">
+                {currentQuestion.keyword}
+              </Badge>
+            )}
 
-          {/* Buttons */}
-          <div className="flex gap-3 justify-center mt-2">
-            <Button
-              className="bg-green-600 text-white font-semibold hover:bg-green-700 cursor-pointer"
-              onClick={() => setShowAnswer(true)}
-              disabled={showAnswer}
-            >
-              Đáp án
-            </Button>
-            <Button
-              variant="secondary"
-              className="cursor-pointer font-semibold"
-              disabled={!showAnswer || currentIndex === questions.length - 1}
-              onClick={() => setCurrentIndex((prev) => prev + 1)}
-            >
-              Câu tiếp theo
-            </Button>
-          </div>
-        </div>
+            {/* Buttons */}
+            <div className="flex gap-3 justify-center mt-2">
+              <Button
+                className="bg-green-600 text-white font-semibold hover:bg-green-700 cursor-pointer"
+                onClick={() => setShowAnswer(true)}
+                disabled={showAnswer}
+              >
+                Đáp án
+              </Button>
+              <Button
+                variant="secondary"
+                className="cursor-pointer font-semibold"
+                disabled={!showAnswer || currentIndex === questions.length - 1}
+                onClick={() => setCurrentIndex((prev) => prev + 1)}
+              >
+                Câu tiếp theo
+              </Button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   );

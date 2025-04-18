@@ -13,6 +13,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { getModuleById } from "@/services/modules";
+import { downloadBingoPDF } from "@/services/bingo";
 import clsx from "clsx";
 
 interface ModuleBarProps {
@@ -43,10 +44,15 @@ export const ModuleBar = ({ moduleId, disabled, onStart }: ModuleBarProps) => {
 
   const handlePrint = async () => {
     setPrintStatus("loading");
-    setTimeout(() => {
+    try {
+      await downloadBingoPDF(moduleId);
+      toast.success("PDF downloaded successfully!");
       setPrintStatus("done");
       setTimeout(() => setPrintStatus("idle"), 2000);
-    }, 2000);
+    } catch (error) {
+      toast.error("Failed to download PDF");
+      setPrintStatus("idle");
+    }
   };
 
   return (
