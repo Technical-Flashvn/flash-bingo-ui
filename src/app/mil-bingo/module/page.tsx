@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BiSolidLeftArrowCircle } from "react-icons/bi";
 import { getAllModules } from "@/services/modules";
-import { Loader2, Rabbit } from "lucide-react";
+import { generateBingoCards } from "@/services/bingo";
+import { Loader2 } from "lucide-react";
 import LoaderCustom from "@/components/loader-custom/loader-custom";
 
 type Module = {
@@ -25,7 +26,7 @@ export default function ModulePage() {
         const data = await getAllModules();
         setModules(data);
       } catch (error) {
-        return [];
+        console.error("Lỗi khi tải danh sách modules:", error);
       } finally {
         setLoading(false);
       }
@@ -34,9 +35,16 @@ export default function ModulePage() {
     fetchModules();
   }, []);
 
-  const handleSelectModule = (moduleId: string) => {
+  const handleSelectModule = async (moduleId: string) => {
     setLoadingModule(moduleId);
-    router.push(`/mil-bingo/module/${moduleId}`);
+    try {
+      await generateBingoCards(moduleId); // 👈 gọi tạo phiếu trước
+      router.push(`/mil-bingo/module/${moduleId}`);
+    } catch (error) {
+      console.error("Không thể tạo phiếu bingo:", error);
+      alert("Không thể tạo phiếu bingo. Vui lòng thử lại.");
+      setLoadingModule(null);
+    }
   };
 
   if (loading) {
@@ -53,7 +61,7 @@ export default function ModulePage() {
       <div className="flex items-center w-full mb-4 sticky top-0 bg-white z-10 p-2">
         <BiSolidLeftArrowCircle
           className="text-green-500 text-3xl cursor-pointer hover:text-green-600 transition"
-          onClick={() => router.push("/")} // Quay về trang chính
+          onClick={() => router.push("/")}
         />
         <div className="text-1xl font-bold mx-auto">Chọn Module</div>
       </div>

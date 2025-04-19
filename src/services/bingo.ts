@@ -1,16 +1,17 @@
 // src/features/services/bingo.ts
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 export const generateBingoCards = async (moduleId: string) => {
   try {
     const res = await axios.post(
-      `${API_BASE_URL}/bingo/generate/${moduleId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/bingo/generate/${moduleId}`,
       {},
       { withCredentials: true }
     );
+    console.log("API URL:", `${process.env.NEXT_PUBLIC_API_BASE_URL}/bingo/generate/${moduleId}`);
+
     return res.data; // Trả về danh sách bingo cards đã tạo
+
   } catch (error) {
     throw new Error('Failed to generate bingo cards');
   }
@@ -18,7 +19,7 @@ export const generateBingoCards = async (moduleId: string) => {
 
 export const getBingoCardByIndex = async (moduleId: string, index: number) => {
   try {
-    const res = await axios.get(`${API_BASE_URL}/bingo/show/${moduleId}/${index}`);
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bingo/show/${moduleId}/${index}`);
     return res.data; // Trả về chi tiết 1 bingo card
   } catch (error) {
     throw new Error('Failed to fetch bingo card');
@@ -27,7 +28,7 @@ export const getBingoCardByIndex = async (moduleId: string, index: number) => {
 
 export const downloadBingoPDF = async (moduleId: string) => {
   try {
-    const res = await axios.get(`${API_BASE_URL}/bingo/download/pdf/${moduleId}`, {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bingo/download/pdf/${moduleId}`, {
       responseType: 'blob', // Quan trọng để xử lý PDF
     });
 
