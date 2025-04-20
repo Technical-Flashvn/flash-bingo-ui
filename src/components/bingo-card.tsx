@@ -100,7 +100,7 @@ export default function BingoCard({
               {kw}
               {checked[i] && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Check className="w-8 h-8 text-green-600 opacity-70" />
+                  <Check className="w-15 h-15 text-green-600 opacity-70" />
                 </div>
               )}
             </div>
@@ -127,7 +127,7 @@ export default function BingoCard({
             <img
               src="/medal.png"
               alt="Medal"
-              className="w-20 h-20 object-contain"
+              className="w-30 h-30 object-contain"
             />
           </button>
         </div>
