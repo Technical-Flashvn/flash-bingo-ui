@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { CircleAlert, Loader2 } from "lucide-react";
-import clsx from "clsx";
 
 export default function BingoEntryPage() {
   const params = useParams();
@@ -19,8 +18,8 @@ export default function BingoEntryPage() {
     const value = inputRef.current?.value.trim();
     const number = parseInt(value || "", 10);
 
-    if (isNaN(number) || number < 1 || number > 30) {
-      setError("Chỉ chấp nhận phiếu từ 1 đến 30.");
+    if (isNaN(number) || number < 1 || number > 60) {
+      setError("Chỉ chấp nhận phiếu từ 1 đến 60.");
       return;
     }
 
@@ -58,7 +57,7 @@ export default function BingoEntryPage() {
               </div>
             ) : (
               <div className="text-sm text-gray-500 font-medium">
-                Nhập số phiếu từ 1 đến 30
+                Nhập số phiếu từ 1 đến 60
               </div>
             )}
 
@@ -67,7 +66,7 @@ export default function BingoEntryPage() {
               <input
                 ref={inputRef}
                 type="number"
-                placeholder="1 đến 30"
+                placeholder="1 đến 60"
                 className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center text-lg"
                 onFocus={() => setError("")}
               />

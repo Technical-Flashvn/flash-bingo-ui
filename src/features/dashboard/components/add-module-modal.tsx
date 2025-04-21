@@ -16,6 +16,7 @@ import { TriangleAlert } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { createModule } from "@/services/modules";
+import { generateBingoCards } from "@/services/bingo";
 
 interface AddModuleModalProps {
   onModuleAdded: () => void;
@@ -44,20 +45,27 @@ export const AddModuleModal = ({ onModuleAdded }: AddModuleModalProps) => {
       .map((k) => k.trim())
       .filter((k) => k.length > 0);
 
-    if (keywords.length === 0) {
-      setError("Please provide at least one keyword.");
-      return;
-    }
-
-    if (keywords.length > 30) {
-      setError("You can only add up to 30 keywords.");
+    if (keywords.length !== 30) {
+      setError("You must provide exactly 30 keywords.");
       return;
     }
 
     setLoading(true);
     try {
-      await createModule(title, keywords);
+      // 1. Tạo module
+      const newModule = await createModule(title, keywords);
       toast.success("Module created successfully!");
+
+      // 2. Gọi API tạo thẻ bingo
+      try {
+        await generateBingoCards(newModule._id);
+        toast.success("Bingo cards generated!");
+      } catch (err) {
+        console.error(err);
+        toast.error("Module created, but failed to generate bingo cards.");
+      }
+
+      // 3. Reset form
       if (titleRef.current) titleRef.current.value = "";
       if (keywordRef.current) keywordRef.current.value = "";
       setOpen(false);
