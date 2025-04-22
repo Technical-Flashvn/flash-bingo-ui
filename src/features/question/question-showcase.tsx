@@ -40,8 +40,8 @@ export const QuestionShowcase = ({
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const [keywordsSeen, setKeywordsSeen] = useState<string[]>([]);
   const [ConfirmDialog, confirm] = useConfirm(
-    "Đóng chế độ trình chiếu?",
-    "Bạn sẽ không thể xem lại câu hỏi hiện tại."
+    "Close Presentation?",
+    "You cannot review checked keywords."
   );
 
   const currentQuestion = questions[currentIndex];
@@ -78,6 +78,15 @@ export const QuestionShowcase = ({
         >
           <X className="w-5 h-5" />
         </button>
+
+        {/* Logo FLASH ở đầu, căn giữa */}
+        <div className="mb-4">
+          <img
+            src="/FLASH-logo-colorful.png"
+            alt="FLASH logo"
+            className="w-30 mx-auto"
+          />
+        </div>
 
         {/* Select từ khóa đã qua */}
         {keywordsSeen.length > 0 && (
