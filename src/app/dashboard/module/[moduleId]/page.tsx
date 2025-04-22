@@ -4,16 +4,17 @@ import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
-
+import { LoaderCircle } from "lucide-react";
+//API services
 import { getModuleById } from "@/services/modules";
+import { getQuestionsByModule, deleteQuestion } from "@/services/question";
+//Components
 import { useConfirm } from "@/components/use-confirm";
 import { QuestionCard } from "@/components/QuestionCard";
 import { ModuleBar } from "@/features/question/module-bar";
-import { AddQuestionModal } from "@/features/question/add-question-modal";
-import { getQuestionsByModule, deleteQuestion } from "@/services/question";
-import { EditQuestionModal } from "@/features/question/edit-question-modal";
 import { QuestionShowcase } from "@/features/question/question-showcase";
+import { AddQuestionModal } from "@/features/question/add-question-modal";
+import { EditQuestionModal } from "@/features/question/edit-question-modal";
 
 type Question = {
   _id: string;
@@ -75,7 +76,7 @@ export default function ModulePage() {
 
     fetchQuestions();
   }, [moduleId]);
-
+  //question: DELETE
   const handleDelete = async (id: string) => {
     const confirmed = await confirm();
     if (!confirmed) return;
@@ -92,7 +93,7 @@ export default function ModulePage() {
   if (loading) {
     return (
       <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
-        <Loader className="size-6 animate-spin text-muted-foreground" />
+        <LoaderCircle className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
   }

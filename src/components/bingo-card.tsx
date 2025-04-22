@@ -1,8 +1,10 @@
+//flash-bingo-ui\src\components\bingo-card.tsx
 "use client";
 
 import { useState, useMemo } from "react";
-import { Check } from "lucide-react";
+
 import clsx from "clsx";
+import { Check } from "lucide-react";
 
 type BingoCardViewerProps = {
   bingoCardId: number;

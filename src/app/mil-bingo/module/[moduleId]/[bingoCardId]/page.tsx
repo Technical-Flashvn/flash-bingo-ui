@@ -12,9 +12,7 @@ type PageProps = {
 };
 
 export default async function BingoCardPage(props: PageProps) {
-  const { moduleId, bingoCardId } = await  props.params;
-  console.log("✅ params", props.params);
-
+  const { moduleId, bingoCardId } = props.params;
 
   const cardId = Number(bingoCardId);
   if (isNaN(cardId)) return notFound();
@@ -28,7 +26,7 @@ export default async function BingoCardPage(props: PageProps) {
     </div>
   );
 }
-
+//gameplay: GET bingo card by index
 async function getCardData(moduleId: string, index: number) {
   try {
     return await getBingoCardByIndex(moduleId, index);

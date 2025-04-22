@@ -1,4 +1,6 @@
+//flash-bingo-ui\src\components\QuestionCard.tsx
 import { useState } from "react";
+//UI components
 import {
   Dialog,
   DialogContent,
@@ -47,7 +49,7 @@ export const QuestionCard = ({
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="text-white bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded-md"
+            className="text-white bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded-md cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               onEdit(question);
@@ -58,7 +60,7 @@ export const QuestionCard = ({
 
           <Button
             variant="outline"
-            className="text-white bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md"
+            className="text-white bg-red-500 hover:bg-red-600 px-2 py-1 rounded-md cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(question._id);
@@ -68,7 +70,8 @@ export const QuestionCard = ({
           </Button>
         </div>
       </div>
-
+              
+      {/* Dialog to show question details */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className=" bg-white dark:bg-zinc-900 w-full max-w-lg rounded-lg pb-16">
           <DialogHeader>
@@ -96,7 +99,7 @@ export const QuestionCard = ({
             )}
           </div>
 
-          {/* Keyword tag fixed at bottom */}
+          {/* Keyword tag at bottom */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <span className="px-4 py-3 text-md rounded-full bg-[#3f99e9] text-white shadow-sm font-semibold">
               {question.keyword}

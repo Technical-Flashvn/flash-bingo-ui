@@ -1,10 +1,13 @@
+//flash-bingo-ui\src\app\mil-bingo\module\page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BiSolidLeftArrowCircle } from "react-icons/bi";
+//API services
 import { getAllModules } from "@/services/modules";
+//Components
 import { Loader2 } from "lucide-react";
+import { BiSolidLeftArrowCircle } from "react-icons/bi";
 import LoaderCustom from "@/components/loader-custom/loader-custom";
 
 type Module = {
@@ -17,7 +20,7 @@ export default function ModulePage() {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingModule, setLoadingModule] = useState<string | null>(null);
-
+  //gameplay: GET all modules
   useEffect(() => {
     async function fetchModules() {
       try {
@@ -67,7 +70,7 @@ export default function ModulePage() {
         </div>
       </div>
 
-      {/* Nội dung */}
+      {/* modules list */}
       <div className="w-full max-w-2xl flex flex-col items-center px-4">
         {modules.length === 0 ? (
           <div className="text-center text-gray-500 mt-6">

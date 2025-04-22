@@ -1,6 +1,8 @@
+//flash-bingo-ui\src\features\dashboard\components\add-module-modal.tsx
 "use client";
 
 import { useRef, useState } from "react";
+//UI components
 import {
   Dialog,
   DialogTrigger,
@@ -12,9 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { TriangleAlert } from "lucide-react";
+//packages
 import toast from "react-hot-toast";
-
+import { TriangleAlert } from "lucide-react";
+//API services
 import { createModule } from "@/services/modules";
 import { generateBingoCards } from "@/services/bingo";
 
@@ -52,11 +55,11 @@ export const AddModuleModal = ({ onModuleAdded }: AddModuleModalProps) => {
 
     setLoading(true);
     try {
-      // 1. Tạo module
+      // 1. Create module
       const newModule = await createModule(title, keywords);
       toast.success("Module created successfully!");
 
-      // 2. Gọi API tạo thẻ bingo
+      // 2. Call api generate bingo cards
       try {
         await generateBingoCards(newModule._id);
         toast.success("Bingo cards generated!");

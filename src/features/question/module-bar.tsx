@@ -1,8 +1,5 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+//Packages
 import {
   ArrowLeft,
   CirclePlay,
@@ -10,11 +7,15 @@ import {
   FileCheck,
   LoaderCircle,
 } from "lucide-react";
-
+import clsx from "clsx";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+//UI components
 import { Button } from "@/components/ui/button";
+//API services
 import { getModuleById } from "@/services/modules";
 import { downloadBingoPDF } from "@/services/bingo";
-import clsx from "clsx";
 
 interface ModuleBarProps {
   moduleId: string;

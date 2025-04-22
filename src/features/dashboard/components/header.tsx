@@ -1,11 +1,13 @@
 "use client";
+//packages
 import toast from "react-hot-toast";
-import { logOut } from "@/services/auth";
 import { MdLogout } from "react-icons/md";
 import { useRouter } from "next/navigation";
-
+//UI components
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/components/use-confirm";
+//API services
+import { logOut } from "@/services/auth";
 import { useAuthStore } from "@/services/auth-store";
 
 interface User {

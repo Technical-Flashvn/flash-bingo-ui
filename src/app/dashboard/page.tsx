@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+//API services
 import { getAllModules } from "@/services/modules";
-import { DashboardHeader } from "@/features/dashboard/components/header";
+import { useAuthStore } from "@/services/auth-store";
+//Components
 import { ModuleCard } from "@/components/ModuleCard";
 import { AddModuleModal } from "@/features/dashboard/components/add-module-modal";
-import { useAuthStore } from "@/services/auth-store";
 
 interface Module {
   _id: string;
@@ -18,7 +19,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const user = useAuthStore((state) => state.user);
-
+  //Dashboard: GET all modules
   const fetchModules = async () => {
     setIsLoading(true);
     try {
@@ -36,7 +37,7 @@ export default function DashboardPage() {
   }, []);
 
   const handleModuleAdded = () => {
-    fetchModules(); // Re-fetch sau khi thêm module
+    fetchModules();
   };
 
   const handleModuleDeleted = (moduleId: string) => {

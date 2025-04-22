@@ -1,8 +1,10 @@
+//flash-bingo-ui\src\app\mil-bingo\module\[moduleId]\page.tsx
 "use client";
 
+import Image from "next/image";
 import { useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
+
 import { CircleAlert, Loader2 } from "lucide-react";
 
 export default function BingoEntryPage() {

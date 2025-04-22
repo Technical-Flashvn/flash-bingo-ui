@@ -1,6 +1,9 @@
 "use client";
-
+//Packages
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { CheckCircleIcon, Plus, Trash2 } from "lucide-react";
+//UI components
 import {
   Dialog,
   DialogContent,
@@ -8,8 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectContent,
@@ -17,9 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircleIcon, Plus, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+//API services
 import { updateQuestion } from "@/services/question";
-import toast from "react-hot-toast";
 
 interface EditQuestionModalProps {
   question: {
@@ -36,7 +39,6 @@ interface EditQuestionModalProps {
 }
 
 export const EditQuestionModal = ({
-  moduleId,
   question,
   keywords,
   onClose,

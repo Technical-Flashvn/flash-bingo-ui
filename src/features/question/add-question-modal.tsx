@@ -1,8 +1,9 @@
 "use client";
-
+//Packages
 import toast from "react-hot-toast";
 import { useState, useRef } from "react";
-
+import { CheckCircleIcon, Plus, Trash2 } from "lucide-react";
+//UI components
 import {
   Dialog,
   DialogTrigger,
@@ -11,7 +12,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-
 import {
   Select,
   SelectContent,
@@ -21,8 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CheckCircleIcon, Plus, Trash2 } from "lucide-react";
-
+//API services
 import { createQuestion } from "@/services/question";
 
 interface AddQuestionModalProps {
@@ -85,7 +84,7 @@ export const AddQuestionModal = ({
       setOpen(false);
       titleRef.current!.value = "";
       correctAnswerRef.current!.value = "";
-      wrongAnswersRefs.current = [null!]; // Reset về 1 input
+      wrongAnswersRefs.current = [null!]; // Reset to 1 input
       setSelectedKeyword("");
       setRenderId((prev) => prev + 1);
       onQuestionAdded();
@@ -138,7 +137,7 @@ export const AddQuestionModal = ({
           </div>
 
           {/* Wrong answers */}
-          <div className="max-h-[200px] overflow-y-auto scrollbar-hide space-y-2">
+          <div className="max-h-[200px] overflow-y-auto scrollbar-hide space-y-2" key={renderId}>
             {wrongAnswersRefs.current.map((_, index) => (
               <div key={index} className="relative flex items-center">
                 <Input

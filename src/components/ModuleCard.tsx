@@ -1,11 +1,17 @@
+//flash-bingo-ui\src\components\ModuleCard.tsx
 "use client";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { Trash2, Pencil, TriangleAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { deleteModule, updateModule } from "@/services/modules";
+//UI components
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogTrigger,
@@ -14,17 +20,15 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "./ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Trash2, Pencil, TriangleAlert, Loader2 } from "lucide-react";
+//API services + hooks
 import { useConfirm } from "./use-confirm";
-import toast from "react-hot-toast";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { generateBingoCards } from "@/services/bingo";
+import { deleteModule, updateModule } from "@/services/modules";
 
 interface Module {
   _id: string;
@@ -45,6 +49,7 @@ export const ModuleCard = ({
 }: ModuleCardProps) => {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [loading, setIsLoading] = useState(false);
 
   const [editOpen, setEditOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(module.title);
@@ -56,7 +61,7 @@ export const ModuleCard = ({
     "Are you sure?",
     "This action cannot be undone"
   );
-
+  //DELETE MODULE
   const handleDelete = async () => {
     const confirmed = await confirm();
     if (!confirmed) return;
@@ -68,7 +73,7 @@ export const ModuleCard = ({
       toast.error("Error deleting module");
     }
   };
-
+  //EDIT MODULE
   const handleEdit = async () => {
     const trimmedTitle = newTitle.trim();
     const trimmedKeywords = keywordsString
@@ -89,6 +94,10 @@ export const ModuleCard = ({
     try {
       await updateModule(module._id, trimmedTitle, trimmedKeywords);
       toast.success("Module updated successfully");
+
+      await generateBingoCards(module._id);
+      toast.success("Bingo cards regenerated!");
+
       setEditOpen(false);
       onUpdated();
     } catch (error) {
@@ -102,25 +111,36 @@ export const ModuleCard = ({
       <Card className="p-4 flex items-center justify-between hover:shadow-md">
         {/* Left: title + dropdown */}
         <div
-          className="flex flex-col gap-2 cursor-pointer"
-          onClick={() => router.replace(`/dashboard/module/${module._id}`)}
+          className="flex flex-col gap-2 cursor-pointer min-h-[60px] justify-center"
+          onClick={async () => {
+            setIsLoading(true);
+            router.replace(`/dashboard/module/${module._id}`);
+          }}
         >
-          <p className="font-semibold text-base text-primary">{module.title}</p>
-          <Select>
-            <SelectTrigger
-              className="w-[200px]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SelectValue placeholder="view keyword" />
-            </SelectTrigger>
-            <SelectContent>
-              {module.keywords.map((keyword, index) => (
-                <SelectItem key={index} value={keyword}>
-                  {keyword}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin text-blue-500 mx-auto" />
+          ) : (
+            <>
+              <p className="font-semibold text-base text-primary">
+                {module.title}
+              </p>
+              <Select>
+                <SelectTrigger
+                  className="w-[200px]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <SelectValue placeholder="view keyword" />
+                </SelectTrigger>
+                <SelectContent>
+                  {module.keywords.map((keyword, index) => (
+                    <SelectItem key={index} value={keyword}>
+                      {keyword}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
+          )}
         </div>
 
         {/* Right: buttons */}
@@ -137,8 +157,10 @@ export const ModuleCard = ({
           >
             <DialogTrigger asChild>
               <Button
-                className="bg-blue-500 hover:bg-blue-600 text-white"
+                className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
                 size="icon"
+                disabled={loading}
+                onClick={(e) => e.stopPropagation()}
               >
                 <Pencil className="w-5 h-5" />
               </Button>
@@ -190,8 +212,9 @@ export const ModuleCard = ({
           </Dialog>
 
           <Button
-            className="bg-red-500 hover:bg-red-600 text-white"
+            className="bg-red-500 hover:bg-red-600 text-white cursor-pointer"
             size="icon"
+            disabled={loading}
             onClick={(e) => {
               handleDelete();
               e.stopPropagation();
