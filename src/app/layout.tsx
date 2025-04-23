@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { ReactQueryProvider } from "@/lib/react-query-provider";
 
 export const metadata: Metadata = {
   title: "FLASH Bingo",
@@ -17,8 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans">
-        {children}
-        <Toaster position="top-center" reverseOrder={false} />
+        <ReactQueryProvider>
+          
+          {children}
+          <Toaster position="top-center" reverseOrder={false} />
+        </ReactQueryProvider>
       </body>
     </html>
   );

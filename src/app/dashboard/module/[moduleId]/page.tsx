@@ -1,14 +1,16 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
-//API services
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+
+// API services
 import { getModuleById } from "@/services/modules";
 import { getQuestionsByModule, deleteQuestion } from "@/services/question";
-//Components
+
+// Components
 import { useConfirm } from "@/components/use-confirm";
 import { QuestionCard } from "@/components/QuestionCard";
 import { ModuleBar } from "@/features/question/module-bar";
@@ -25,58 +27,33 @@ type Question = {
 };
 
 export default function ModulePage() {
-  const { moduleId } = useParams();
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const { moduleId } = useParams() as { moduleId: string };
   const [showShowcase, setShowShowcase] = useState(false);
-  const [ConfirmDialog, confirm] = useConfirm(
-    "Are you sure?",
-    "This action cannot be undone"
-  );
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [ConfirmDialog, confirm] = useConfirm("Are you sure?", "This action cannot be undone");
 
-  useEffect(() => {
-    if (!moduleId) return;
+  const {
+    data: questionsData,
+    isLoading: loadingQuestions,
+    refetch: refetchQuestions,
+  } = useQuery({
+    queryKey: ["questions", moduleId],
+    queryFn: () => getQuestionsByModule(moduleId),
+    enabled: !!moduleId,
+  });
 
-    async function fetchQuestionsAndKeywords() {
-      setLoading(true);
-      try {
-        const [questionData, moduleData] = await Promise.all([
-          getQuestionsByModule(moduleId as string),
-          getModuleById(moduleId as string),
-        ]);
-        setQuestions(questionData.questions ?? []);
-        setKeywords(moduleData?.keywords ?? []);
-        console.log("Fetched keywords:", moduleData?.module?.keywords);
-      } catch (error) {
-        console.error(error);
-        setQuestions([]);
-      }
-      setLoading(false);
-    }
+  const {
+    data: moduleData,
+    isLoading: loadingModule,
+  } = useQuery({
+    queryKey: ["module", moduleId],
+    queryFn: () => getModuleById(moduleId),
+    enabled: !!moduleId,
+  });
 
-    fetchQuestionsAndKeywords();
-  }, [moduleId]);
+  const questions = questionsData?.questions ?? [];
+  const keywords = moduleData?.keywords ?? [];
 
-  useEffect(() => {
-    if (!moduleId) return;
-
-    async function fetchQuestions() {
-      setLoading(true);
-      try {
-        const data = await getQuestionsByModule(moduleId as string);
-        setQuestions(data.questions ?? []);
-      } catch (error) {
-        console.error(error);
-        setQuestions([]);
-      }
-      setLoading(false);
-    }
-
-    fetchQuestions();
-  }, [moduleId]);
-  //question: DELETE
   const handleDelete = async (id: string) => {
     const confirmed = await confirm();
     if (!confirmed) return;
@@ -84,13 +61,13 @@ export default function ModulePage() {
     try {
       await deleteQuestion(id);
       toast.success("Question deleted successfully");
-      setQuestions((prev) => prev.filter((q) => q._id !== id));
+      refetchQuestions();
     } catch (error) {
       toast.error("Failed to delete question");
     }
   };
 
-  if (loading) {
+  if (loadingQuestions || loadingModule) {
     return (
       <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
         <LoaderCircle className="size-6 animate-spin text-muted-foreground" />
@@ -102,7 +79,7 @@ export default function ModulePage() {
     <>
       <ConfirmDialog />
       <ModuleBar
-        moduleId={moduleId as string}
+        moduleId={moduleId}
         disabled={questions.length === 0}
         onStart={() => setShowShowcase(true)}
       />
@@ -123,7 +100,7 @@ export default function ModulePage() {
               </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 place-items-center">
-                {questions.map((q) => (
+                {questions.map((q: Question) => (
                   <QuestionCard
                     key={q._id}
                     question={{ ...q, wrongAnswers: q.wrongAnswers ?? [] }}
@@ -138,27 +115,19 @@ export default function ModulePage() {
 
         <div className="mt-4">
           <AddQuestionModal
-            moduleId={moduleId as string}
+            moduleId={moduleId}
             keywords={keywords}
-            onQuestionAdded={() =>
-              getQuestionsByModule(moduleId as string).then((data) =>
-                setQuestions(data.questions ?? [])
-              )
-            }
+            onQuestionAdded={refetchQuestions}
           />
         </div>
 
         {editingQuestion && (
           <EditQuestionModal
             question={editingQuestion}
-            moduleId={moduleId as string}
+            moduleId={moduleId}
             keywords={keywords}
             onClose={() => setEditingQuestion(null)}
-            onQuestionUpdated={() =>
-              getQuestionsByModule(moduleId as string).then((data) =>
-                setQuestions(data.questions ?? [])
-              )
-            }
+            onQuestionUpdated={refetchQuestions}
           />
         )}
       </div>

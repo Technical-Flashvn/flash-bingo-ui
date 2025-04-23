@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 //API services
 import { getAllModules } from "@/services/modules";
 //Components
-import { Loader2 } from "lucide-react";
-import { BiSolidLeftArrowCircle } from "react-icons/bi";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import LoaderCustom from "@/components/loader-custom/loader-custom";
 
 type Module = {
@@ -55,8 +54,8 @@ export default function ModulePage() {
       {/* Header */}
       <div className="w-full max-w-2xl sticky top-0 bg-white z-10 px-4 py-3 border-b border-gray-300">
         <div className="relative flex items-center justify-center h-12">
-          <BiSolidLeftArrowCircle
-            className="absolute left-0 text-green-500 text-3xl cursor-pointer hover:text-green-600 transition"
+          <ArrowLeft
+            className="w-10 h-10 absolute left-0 border border-gray-400 rounded-md p-2 text-muted-foreground cursor-pointer hover:scale-110 transition-transform duration-200"
             onClick={() => router.push("/")}
           />
           <img

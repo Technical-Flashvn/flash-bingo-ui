@@ -1,6 +1,6 @@
 "use client";
-
-import { useState, useEffect } from "react";
+//hooks
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 //API services
 import { getAllModules } from "@/services/modules";
 import { useAuthStore } from "@/services/auth-store";
@@ -15,40 +15,33 @@ interface Module {
 }
 
 export default function DashboardPage() {
-  const [modules, setModules] = useState<Module[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const user = useAuthStore((state) => state.user);
   //Dashboard: GET all modules
-  const fetchModules = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllModules();
-      setModules(data);
-    } catch (error) {
-      console.error("Failed to fetch modules", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchModules();
-  }, []);
+  const {
+    data: modules = [],
+    isLoading,
+    refetch,
+  } = useQuery<Module[]>({
+    queryKey: ["modules"],
+    queryFn: getAllModules,
+  });
 
   const handleModuleAdded = () => {
-    fetchModules();
+    refetch();
   };
 
   const handleModuleDeleted = (moduleId: string) => {
-    setModules((prev) => prev.filter((m) => m._id !== moduleId));
+    queryClient.setQueryData<Module[]>(["modules"], (oldModules = []) =>
+      oldModules.filter((m) => m._id !== moduleId)
+    );
   };
 
   if (!user) return null;
 
   return (
     <div className="flex flex-col min-h-screen">
-
       <div className="p-6 flex-1">
         <h2 className="text-xl font-semibold mb-4">Your Modules</h2>
 
@@ -72,7 +65,7 @@ export default function DashboardPage() {
                         key={module._id}
                         module={module}
                         onDeleted={() => handleModuleDeleted(module._id)}
-                        onUpdated={fetchModules} // Re-fetch modules after update
+                        onUpdated={refetch} // Re-fetch modules after update
                       />
                     ))}
                   </div>

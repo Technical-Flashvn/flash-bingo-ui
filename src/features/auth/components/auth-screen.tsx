@@ -1,7 +1,7 @@
 // frontend/src/features/auth/components/auth-screen.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { SignInflow } from '../auth-types';
 

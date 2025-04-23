@@ -1,11 +1,10 @@
 //flash-bingo-ui\src\app\mil-bingo\module\[moduleId]\page.tsx
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { CircleAlert, Loader2 } from "lucide-react";
+import { ArrowLeft, CircleAlert, Loader2 } from "lucide-react";
 
 export default function BingoEntryPage() {
   const params = useParams();
@@ -14,9 +13,9 @@ export default function BingoEntryPage() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Thêm loading
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit: () => void = () => {
     const value = inputRef.current?.value.trim();
     const number = parseInt(value || "", 10);
 
@@ -26,9 +25,8 @@ export default function BingoEntryPage() {
     }
 
     setError("");
-    setLoading(true); // Hiển thị spinner
+    setLoading(true);
 
-    // Delay nhỏ để spinner kịp render trước khi chuyển trang
     setTimeout(() => {
       router.push(`/mil-bingo/module/${moduleId}/${number}`);
     }, 300);
@@ -37,21 +35,19 @@ export default function BingoEntryPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#fcefd4] px-4">
       <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-sm flex flex-col items-center gap-4 border-2 border-[#1b1b62]">
+        <div className="absolute top-4 left-4 ">
+          <ArrowLeft
+            className="w-10 h-10 border rounded-md p-2 bg-rose-500 text-white cursor-pointer hover:scale-110 transition-transform duration-200"
+            onClick={() => router.back()}
+          />
+        </div>
         {/* Logo */}
-        <Image
-          src="/FLASH-logo-colorful.png"
-          alt="logo"
-          width={150}
-          height={150}
-          priority
-        />
+        <img src="/FLASH-logo-colorful.png" alt="logo" className="h-20 mb-4" />
 
-        {/* Nếu đang loading thì hiển thị spinner */}
         {loading ? (
           <Loader2 className="animate-spin text-[#1b1b62] w-6 h-6 my-6" />
         ) : (
           <>
-            {/* Thông báo lỗi */}
             {error ? (
               <div className="w-full text-red-600 font-bold text-sm flex items-center gap-2 px-3">
                 <CircleAlert className="w-4 h-4" />
@@ -63,7 +59,7 @@ export default function BingoEntryPage() {
               </div>
             )}
 
-            {/* Form nhập liệu */}
+            {/* Form input */}
             <div className="flex w-full gap-2">
               <input
                 ref={inputRef}

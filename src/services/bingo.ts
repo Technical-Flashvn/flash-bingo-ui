@@ -1,6 +1,19 @@
 // src/features/services/bingo.ts
 import axios from 'axios';
 
+export interface BingoCardData {
+  _id: string;
+  moduleId: {
+    _id?: string;
+    title?: string;
+  };
+  index: number;
+  keywords: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 export const generateBingoCards = async (moduleId: string) => {
   try {
     const res = await axios.post(
