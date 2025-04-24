@@ -1,7 +1,8 @@
-// frontend/src/features/auth/components/auth-screen.tsx
 'use client';
 
-import React, { useState } from 'react';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 import { SignInflow } from '../auth-types';
 
@@ -11,6 +12,15 @@ import { ForgotPasswordCard } from './forgot-password-card';
 
 export const AuthScreen = () => {
   const [state, setState] = useState<SignInflow>('SignIn');
+  const router = useRouter();
+
+  useEffect(() => {
+    const accessToken = Cookies.get('accessToken');
+    if (accessToken) {
+      // Nếu đã có accessToken thì chuyển hướng về dashboard
+      router.replace('/dashboard');
+    }
+  }, []);
 
   return (
     <div className="h-full flex items-center justify-center bg-[#3f99e9]">
