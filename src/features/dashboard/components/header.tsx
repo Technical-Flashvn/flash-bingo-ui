@@ -1,5 +1,6 @@
 "use client";
 //packages
+import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { MdLogout } from "react-icons/md";
 import { useRouter } from "next/navigation";
@@ -33,8 +34,9 @@ export const DashboardHeader = ({ user }: DashboardHeaderProps) => {
     if (!confirmed) return;
     try {
       await logOut();
+      Cookies.remove("accessToken"); // 👈 xoá cookie để middleware không redirect sai
+      setUser(null); // clear state
       router.replace("/auth");
-      setUser(null);
     } catch (error) {
       toast.error("Something went wrong while logging out.");
     }
