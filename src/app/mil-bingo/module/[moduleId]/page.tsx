@@ -60,12 +60,12 @@ export default function BingoEntryPage() {
             )}
 
             {/* Form input */}
-            <div className="flex w-full gap-2">
+            <div className="w-full flex gap-2 items-center justify-center">
               <input
                 ref={inputRef}
                 type="number"
                 placeholder="1 đến 60"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center text-lg"
+                className="w-28 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center text-lg"
                 onFocus={() => setError("")}
               />
               <button

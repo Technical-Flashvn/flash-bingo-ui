@@ -1,9 +1,9 @@
 "use client";
-//Packages
+// Packages
 import toast from "react-hot-toast";
 import { useState, useRef } from "react";
 import { CheckCircleIcon, Plus, Trash2 } from "lucide-react";
-//UI components
+// UI components
 import {
   Dialog,
   DialogTrigger,
@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-//API services
+// API services
 import { createQuestion } from "@/services/question";
 
 interface AddQuestionModalProps {
@@ -38,28 +38,31 @@ export const AddQuestionModal = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedKeyword, setSelectedKeyword] = useState("");
-  const [renderId, setRenderId] = useState(0);
+  const [wrongAnswers, setWrongAnswers] = useState<string[]>([""]);
 
   const titleRef = useRef<HTMLInputElement | null>(null);
   const correctAnswerRef = useRef<HTMLInputElement | null>(null);
-  const wrongAnswersRefs = useRef<HTMLInputElement[]>([null!]);
 
   const handleAddWrongAnswer = () => {
-    wrongAnswersRefs.current.push(null!);
-    setRenderId((prev) => prev + 1);
+    setWrongAnswers((prev) => [...prev, ""]);
   };
 
   const handleRemoveWrongAnswer = (index: number) => {
-    wrongAnswersRefs.current.splice(index, 1);
-    setRenderId((prev) => prev + 1);
+    setWrongAnswers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleWrongAnswerChange = (index: number, value: string) => {
+    setWrongAnswers((prev) =>
+      prev.map((ans, i) => (i === index ? value : ans))
+    );
   };
 
   const handleSubmit = async () => {
     const title = titleRef.current?.value.trim();
     const correctAnswer = correctAnswerRef.current?.value.trim();
-    const filteredWrongAnswers = wrongAnswersRefs.current
-      .map((ref) => ref?.value.trim())
-      .filter((val) => val && val !== "");
+    const filteredWrongAnswers = wrongAnswers
+      .map((ans) => ans.trim())
+      .filter((ans) => ans !== "");
 
     if (
       !title ||
@@ -84,9 +87,8 @@ export const AddQuestionModal = ({
       setOpen(false);
       titleRef.current!.value = "";
       correctAnswerRef.current!.value = "";
-      wrongAnswersRefs.current = [null!]; // Reset to 1 input
+      setWrongAnswers([""]); // Reset to 1 input
       setSelectedKeyword("");
-      setRenderId((prev) => prev + 1);
       onQuestionAdded();
     } catch (error) {
       toast.error("Something went wrong!");
@@ -98,7 +100,9 @@ export const AddQuestionModal = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" className="font-semibold">+ Add Question</Button>
+        <Button variant="default" className="font-semibold">
+          + Add Question
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-lg">
@@ -124,7 +128,7 @@ export const AddQuestionModal = ({
             </SelectContent>
           </Select>
 
-          {/* Correct answer */}
+          {/* Correct Answer */}
           <div className="relative">
             <Input
               ref={correctAnswerRef}
@@ -136,18 +140,19 @@ export const AddQuestionModal = ({
             </span>
           </div>
 
-          {/* Wrong answers */}
-          <div className="max-h-[200px] overflow-y-auto scrollbar-hide space-y-2" key={renderId}>
-            {wrongAnswersRefs.current.map((_, index) => (
+          {/* Wrong Answers */}
+          <div className="max-h-[200px] overflow-y-auto scrollbar-hide space-y-2">
+            {wrongAnswers.map((ans, index) => (
               <div key={index} className="relative flex items-center">
                 <Input
-                  ref={(el) => {
-                    if (el) wrongAnswersRefs.current[index] = el;
-                  }}
+                  value={ans}
+                  onChange={(e) =>
+                    handleWrongAnswerChange(index, e.target.value)
+                  }
                   placeholder={`Wrong Answer ${index + 1}...`}
                   className="border-red-400 focus:ring-red-500"
                 />
-                {wrongAnswersRefs.current.length > 1 && (
+                {wrongAnswers.length > 1 && (
                   <button
                     onClick={() => handleRemoveWrongAnswer(index)}
                     className="absolute right-3 text-red-500 hover:text-red-700"

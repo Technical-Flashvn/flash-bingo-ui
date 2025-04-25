@@ -1,9 +1,13 @@
-// [moduleId]/[bingoCardId]/page.tsx
 import BingoCardClientWrapper from "./client-wrapper";
 
 export default function BingoCardPage() {
   return (
-    <div className="min-h-screen bg-[#fcefd4] flex items-center justify-center px-4 py-8">
+    <div className="relative min-h-screen bg-[#fcefd4] flex items-center justify-center px-4 py-8">
+      <img
+        src="/MIL BINGO.png"
+        alt="MIL BINGO"
+        className="absolute top-6 left-1/2 -translate-x-1/2 h-40"
+      />
       <BingoCardClientWrapper />
     </div>
   );
