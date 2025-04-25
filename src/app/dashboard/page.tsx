@@ -45,13 +45,13 @@ export default function DashboardPage() {
       <div className="p-6 flex-1">
         <h2 className="text-xl font-semibold mb-4">Your Modules</h2>
 
-        <div className="relative border rounded-lg p-4 flex flex-col max-h-[480px]">
+        <div className="relative border rounded-lg p-4 flex flex-col max-h-[550px]">
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
               <div className="loader border-t-4 border-blue-500 rounded-full w-8 h-8 animate-spin"></div>
               <p className="ml-2">Loading...</p>
             </div>
-          ) : (
+          ) : ( 
             <>
               <div className="overflow-y-auto flex-1 mb-4">
                 {modules.length === 0 ? (
