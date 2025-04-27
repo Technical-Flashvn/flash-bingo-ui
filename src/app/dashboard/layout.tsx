@@ -20,7 +20,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }, [user, router]);
 
   if (!user) {
-    return <LoaderCustom />;
+    return (
+      <div className="h-full flex-1 flex items-center justify-center flex-col gap-4">
+        <LoaderCustom />
+      </div>
+    );
   }
 
   return (

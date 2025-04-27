@@ -6,7 +6,7 @@ export default function BingoCardPage() {
       <img
         src="/MIL BINGO.png"
         alt="MIL BINGO"
-        className="absolute top-6 left-1/2 -translate-x-1/2 h-40"
+        className="absolute top-0 left-1/2 -translate-x-1/2 h-30"
       />
       <BingoCardClientWrapper />
     </div>
