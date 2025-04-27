@@ -1,14 +1,27 @@
-// flash-bingo-ui/src/app/dashboard/layout.tsx
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/services/auth-store";
 import { DashboardHeader } from "@/features/dashboard/components/header";
+import LoaderCustom from "@/components/loader-custom/loader-custom";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const user = useAuthStore((state) => state.user);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (!user) {
+      const localUser = localStorage.getItem("auth-storage");
+      if (!localUser || !JSON.parse(localUser).state.user) {
+        router.push("/auth");
+      }
+    }
+  }, [user, router]);
+
+  if (!user) {
+    return <LoaderCustom />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
