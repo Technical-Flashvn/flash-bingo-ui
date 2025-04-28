@@ -1,48 +1,33 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation"; // Nếu đang dùng Next.js
-// import { useNavigate } from 'react-router-dom'; // Nếu dùng React Router
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/services/auth-store';
 
-export const RequireAuthentication = ({
-  children,
+export const useAuthRedirect = ({
+  redirectIfFound = false,
+  redirectTo = '/dashboard',
 }: {
-  children: React.ReactNode;
+  redirectIfFound?: boolean;
+  redirectTo?: string;
 }) => {
   const router = useRouter();
-  // const navigate = useNavigate(); // nếu là React Router thì bật dòng này
+  const user = useAuthStore((state) => state.user);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const storedAuth = localStorage.getItem("auth-storage");
-      if (!storedAuth) {
-        router.push("/auth"); // hoặc navigate('/login')
-        return;
-      }
+    if (!hasHydrated) return;
 
-      try {
-        const parsed = JSON.parse(storedAuth);
-        if (!parsed?.state?.user) {
-          router.push("/auth");
-        }
-      } catch (error) {
-        console.error("Failed to parse auth-storage from localStorage", error);
-        router.push("/auth");
-      }
-    };
+    if (redirectIfFound && user) {
+      // Nếu đã login mà đang ở trang login => chuyển hướng vào dashboard
+      router.push(redirectTo);
+    }
 
-    checkAuth(); // Check ngay khi load
+    if (!redirectIfFound && !user) {
+      // Nếu chưa login mà vào dashboard => chuyển hướng ra login
+      router.push('/auth');
+    }
+  }, [user, hasHydrated, router, redirectIfFound, redirectTo]);
 
-    const handleStorageChange = () => {
-      checkAuth(); // Re-check nếu localStorage thay đổi
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [router]);
-
-  return <>{children}</>;
+  return { user, hasHydrated };
 };

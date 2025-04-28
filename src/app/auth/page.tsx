@@ -1,24 +1,17 @@
 "use client";
-import { AuthScreen } from "@/features/auth/components/auth-screen";
 import React from "react";
-import { useAuthStore } from "@/services/auth-store";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useAuthRedirect } from "@/hooks/auth-require";
+import { AuthScreen } from "@/features/auth/components/auth-screen";
 
 const AuthPage = () => {
-  const router = useRouter();
-  const user = useAuthStore((state) => state.user);
+  const { user, hasHydrated } = useAuthRedirect({
+    redirectIfFound: true,
+    redirectTo: '/dashboard',
+  });
 
-  useEffect(() => {
-    if (user) {
-      router.push("/dashboard");
-    } else {
-      const localUser = localStorage.getItem("auth-storage");
-      if (localUser && JSON.parse(localUser).state.user) {
-        router.push("/dashboard");
-      }
-    }
-  }, [user, router]);
+  if (!hasHydrated) {
+    return null;
+  }
 
   if (user) {
     return null;

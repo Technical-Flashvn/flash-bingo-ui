@@ -1,36 +1,23 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/services/auth-store";
+import { useAuthRedirect } from "@/hooks/auth-require";
 import { DashboardHeader } from "@/features/dashboard/components/header";
-import LoaderCustom from "@/components/loader-custom/loader-custom";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const user = useAuthStore((state) => state.user);
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { user, hasHydrated } = useAuthRedirect({ redirectIfFound: false });
 
-  useEffect(() => {
-    if (!user) {
-      const localUser = localStorage.getItem("auth-storage");
-      if (!localUser || !JSON.parse(localUser).state.user) {
-        router.push("/auth");
-      }
-    }
-  }, [user, router]);
-
-  if (!user) {
-    return (
-      <div className="h-full flex-1 flex items-center justify-center flex-col gap-4">
-        <LoaderCustom />
-      </div>
-    );
+  if (!hasHydrated || !user) {
+    return null;
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div>
       <DashboardHeader user={user} />
-      <div className="flex-1">{children}</div>
+      {children}
     </div>
   );
 }
